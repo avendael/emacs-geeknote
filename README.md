@@ -46,6 +46,7 @@ This provides the following commands:
 Geeknote's indexes still work in this package. For example, you can search for a note
 beforehand and use the note's index as an argument to `geeknote-edit`
 
+```
 # `geeknote-find` output
 1: A note
 2: The note you like to edit

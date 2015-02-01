@@ -24,10 +24,8 @@
 
 ;;; Commentary:
 
-;; evernote-mode never really worked for me for some reason.  Geeknote, however,
-;; works perfectly.  This package wraps common geeknote commands into elisp.
-;; With this, geeknote can be interacted with within emacs instead of through
-;; a shell.
+;; This package wraps common geeknote commands into elisp.  With this, geeknote
+;; can be interacted with within emacs instead of through a shell.
 ;;
 ;; The command `geeknote' is expected to be present on the user's `$PATH'.
 ;; Please follow the geeknote installation instructions to obtain this command.
@@ -45,12 +43,14 @@ It's either a path to the geeknote script as an argument to python, or simply
   :group 'geeknote
   :type 'string)
 
+;;;###autoload
 (defun geeknote-setup ()
   "Setup geeknote."
   (interactive)
   (eshell-command (concat
                    geeknote-command " settings --editor emacsclient")))
 
+;;;###autoload
 (defun geeknote-create (title)
   "Create a new note with the given title.
 
@@ -61,6 +61,7 @@ TITLE the title of the new note to be created."
    (format (concat
             geeknote-command " create --content WRITE --title %s") title)))
 
+;;;###autoload
 (defun geeknote-show (title)
   "Open an existing note.
 
@@ -70,6 +71,7 @@ TITLE the title of the note to show."
   (eshell-command
    (format (concat geeknote-command " show %s") title)))
 
+;;;###autoload
 (defun geeknote-edit (title)
   "Open up an existing note for editing.
 
@@ -80,6 +82,7 @@ TITLE the title of the note to edit."
   (async-shell-command
    (format (concat geeknote-command " edit --note %s") title)))
 
+;;;###autoload
 (defun geeknote-remove (title)
   "Delete an existing note.
 
@@ -89,6 +92,7 @@ TITLE the title of the note to delete."
   (eshell-command
    (format (concat geeknote-command " remove --note %s") title)))
 
+;;;###autoload
 (defun geeknote-find (keyword)
   "Search for a note with the given keyword.
 
