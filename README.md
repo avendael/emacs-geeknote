@@ -31,6 +31,13 @@ from another location, you can do so by customizing the variable `geeknote-comma
 (setq geeknote-command "python ~/path/to/geeknote.py")
 ```
 
+This package expects `emacsclient` to be defined as your geeknote editor. You can
+set it up by running this command in your terminal:
+
+```
+$ geeknote settings --editor "emacsclient"
+```
+
 ### Commands
 
 This provides the following commands:
