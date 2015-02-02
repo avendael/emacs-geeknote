@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015 Evan Dale Aromin
 
 ;; Author: Evan Dale Aromin
-;; Version: 0.1
+;; Version: 0.1.1
 ;; Keywords: evernote, geeknote, note, emacs-evernote, evernote-mode
 ;; Package-Requires: ((emacs "24"))
 ;; URL: http://github.com/avendael/emacs-geeknote
@@ -59,8 +59,8 @@ TITLE the title of the new note to be created."
   (interactive "sName: ")
   (message (format "Creating note: %s" title))
   (async-shell-command
-   (format (concat
-            geeknote-command " create --content WRITE --title %s") title)))
+   (format (concat geeknote-command " create --content WRITE --title %s")
+           (shell-quote-argument title))))
 
 ;;;###autoload
 (defun geeknote-show (title)
@@ -70,7 +70,8 @@ TITLE the title of the note to show."
   (interactive "sName: ")
   (message (format "Showing note: %s" title))
   (eshell-command
-   (format (concat geeknote-command " show %s") title)))
+   (format (concat geeknote-command " show %s")
+           (eshell-quote-argument title))))
 
 ;;;###autoload
 (defun geeknote-edit (title)
@@ -81,7 +82,8 @@ TITLE the title of the note to edit."
   (message (format "Editing note: %s" title))
   ;; (eshell-command
   (async-shell-command
-   (format (concat geeknote-command " edit --note %s") title)))
+   (format (concat geeknote-command " edit --note %s")
+           (shell-quote-argument title))))
 
 ;;;###autoload
 (defun geeknote-remove (title)
@@ -91,7 +93,8 @@ TITLE the title of the note to delete."
   (interactive "sName: ")
   (message (format "Deleting note: %s" title))
   (eshell-command
-   (format (concat geeknote-command " remove --note %s") title)))
+   (format (concat geeknote-command " remove --note %s")
+           (eshell-quote-argument title))))
 
 ;;;###autoload
 (defun geeknote-find (keyword)
@@ -100,7 +103,8 @@ TITLE the title of the note to delete."
 KEYWORD the keyword to search the notes with."
   (interactive "skeyword: ")
   (eshell-command
-   (format "geeknote find --search %s --content-search" keyword)))
+   (format "geeknote find --search %s --content-search"
+           (eshell-quote-argument keyword))))
 
 (provide 'geeknote)
 ;;; geeknote.el ends here
