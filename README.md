@@ -40,13 +40,40 @@ $ geeknote settings --editor "emacsclient"
 
 ### Commands
 
-This provides the following commands:
+#### Create
 
-* `geeknote-create` - Create a new note.
-* `geeknote-edit` - Edit a note by title or index.
-* `geeknote-find` - Use a keyword to search notes by title and content.
-* `geeknote-show` - Show a note in a non-editable Emacs buffer.
-* `geeknote-remove` - Delete a note.
+`geeknote-create`: Create a new note.
+
+![create](screenshots/geeknote-create.gif)
+
+#### Edit
+
+`geeknote-edit`: Edit a note by title or index.
+
+![edit](screenshots/geeknote-edit.gif)
+
+Notes can be written in markdown. Most markdown are correctly displayed in Evernote.
+
+![markdown](screenshots/geeknote-markdown.gif)
+
+#### Find
+
+`geeknote-find`: Use a keyword to search notes by title and content.
+
+The index of the results can be used as an argument to another
+geeknote command.
+
+![find](screenshots/geeknote-find.gif)
+
+#### Show
+
+`geeknote-show`: Show a note in a non-editable Emacs buffer.
+
+![show](screenshots/geeknote-show.gif)
+
+#### Remove
+
+`geeknote-remove`: Delete a note. Currently buggy.
 
 ### Indexes
 
