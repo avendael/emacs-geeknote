@@ -73,7 +73,7 @@ geeknote command.
 
 #### Remove
 
-`geeknote-remove`: Delete a note. Currently buggy.
+`geeknote-remove`: Delete a note.
 
 ### Indexes
 
