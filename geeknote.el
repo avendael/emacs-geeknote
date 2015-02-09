@@ -93,7 +93,7 @@ TITLE the title of the note to delete."
   (interactive "sName: ")
   (message (format "Deleting note: %s" title))
   (eshell-command
-   (format (concat geeknote-command " remove --note %s")
+   (format (concat geeknote-command " remove --note %s --force")
            (shell-quote-argument title))))
 
 ;;;###autoload
