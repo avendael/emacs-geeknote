@@ -6,3 +6,6 @@
 
 ## 0.1.2
 * Use `shell-quote-argument` for all argument quoting instead of `eshell-quote-argument`
+
+## 0.1.3
+* Fix `geeknote-remove`
