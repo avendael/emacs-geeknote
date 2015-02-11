@@ -75,6 +75,8 @@ geeknote command.
 
 `geeknote-remove`: Delete a note.
 
+![remove](screenshots/geeknote-remove.gif)
+
 ### Indexes
 
 Geeknote's indexes still work in this package. For example, you can search for a note
