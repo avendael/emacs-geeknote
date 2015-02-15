@@ -103,7 +103,7 @@ TITLE the title of the note to delete."
 KEYWORD the keyword to search the notes with."
   (interactive "skeyword: ")
   (eshell-command
-   (format "geeknote find --search %s --content-search"
+   (format (concat geeknote-command " find --search %s --content-search")
            (shell-quote-argument keyword))))
 
 (provide 'geeknote)
