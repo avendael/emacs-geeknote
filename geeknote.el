@@ -106,5 +106,49 @@ KEYWORD the keyword to search the notes with."
    (format (concat geeknote-command " find --search %s --content-search")
            (shell-quote-argument keyword))))
 
+
+(defun geeknote-parse-title (title)
+  "Rerieve the title from the provided string. Filters out @notebooks and #tags.
+
+TITLE is the input given when asked for a new note title."
+  (let ((wordlist (split-string title)))
+    (mapconcat (lambda (s) s)
+	       (delq nil
+		     (mapcar (lambda (str)
+			       (cond
+				((string-prefix-p "@" str) nil)
+				((string-prefix-p "#" str) nil)
+				(t str)))
+			     wordlist))
+	       " ")))
+
+(defun geeknote-parse-notebook (title)
+  "Rerieve the @notebook from the provided string. Returns nil if none.
+
+TITLE is the input given when asked for a new note title."
+  (let ((wordlist (split-string title)))
+    (elt
+     (delq nil
+	   (mapcar (lambda (str)
+		     (cond
+		      ((string-prefix-p "@" str) (substring str 1))
+		      (t nil)))
+		   wordlist))
+     0)))
+
+(defun geeknote-parse-tags (title)
+  "Rerieve the #tags from the provided string. Returns nil if none.
+
+TITLE is the input given when asked for a new note title."
+  (let ((wordlist (split-string title)))
+    (mapconcat (lambda (s) s)
+	       (delq nil
+		     (mapcar (lambda (str)
+			       (cond
+				((string-prefix-p "#" str) (substring str 1))
+				(t nil)))
+			     wordlist))
+	       ", ")))
+
 (provide 'geeknote)
 ;;; geeknote.el ends here
