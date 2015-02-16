@@ -58,9 +58,16 @@ It's either a path to the geeknote script as an argument to python, or simply
 TITLE the title of the new note to be created."
   (interactive "sName: ")
   (message (format "Creating note: %s" title))
+  (let ((note-title (geeknote-parse-title title))
+	(note-tags (geeknote-parse-tags title))
+	(note-notebook (geeknote-parse-notebook title)))
   (async-shell-command
-   (format (concat geeknote-command " create --content WRITE --title %s")
-           (shell-quote-argument title))))
+   (format (concat geeknote-command " create --content WRITE --title %s --tags %s"
+		   (when note-notebook " --notebook %s"))
+           (shell-quote-argument note-title)
+	   (shell-quote-argument note-tags)
+	   (shell-quote-argument note-notebook)))))
+
 
 ;;;###autoload
 (defun geeknote-show (title)
