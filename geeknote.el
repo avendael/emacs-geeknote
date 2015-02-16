@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015 Evan Dale Aromin
 
 ;; Author: Evan Dale Aromin
-;; Version: 0.1.3
+;; Version: 0.1.4
 ;; Keywords: evernote, geeknote, note, emacs-evernote, evernote-mode
 ;; Package-Requires: ((emacs "24"))
 ;; URL: http://github.com/avendael/emacs-geeknote
