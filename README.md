@@ -53,6 +53,27 @@ $ geeknote settings --editor "emacsclient"
 
 ![create](screenshots/geeknote-create.gif)
 
+You can specify a notebook in the title string using the `@` prefix, like so:
+
+```
+notetitle @notebookname
+```
+
+Similarly, you can specify tags using the `#` prefix:
+
+```
+notetitle #tag1, tag2
+```
+
+This means you can create a note in your desired notebook and tag it in one shot:
+
+```
+notetitle @notebookname #tag1, tag2
+```
+
+If the notebook and the tags are non-existent, they will be created.
+
+
 #### Edit
 
 `geeknote-edit`: Edit a note by title or index.
