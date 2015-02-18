@@ -4,9 +4,17 @@ Use Evernote in Emacs through geeknote
 
 ## Dependencies
 
+### Geeknote
+
 This package assumes that you have the `geeknote` command in your `$PATH`.
 To obtain this command, please refer to the official geeknote
 [documentation](https://github.com/VitaliyRodnenko/geeknote).
+
+Sometimes, geeknote `HEAD` will have bugs. If so, commit
+192a0c5faa1906e2e1f47353bdf8d6000df7eca8 is tested to work properly. You
+can checkout that revision if needed.
+
+### Emacs config
 
 Because of the way `geeknote` works, it is expected that you have emacs running in
 server or daemon mode. Either of the two should work:
