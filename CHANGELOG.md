@@ -1,3 +1,6 @@
+## 0.1.5
+* `geeknote-create` can now add tags and assign to notebook
+
 ## 0.1.4
 * `geeknote-find` will now use the `geeknote-command`
 
