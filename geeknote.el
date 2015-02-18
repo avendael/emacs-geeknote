@@ -58,9 +58,16 @@ It's either a path to the geeknote script as an argument to python, or simply
 TITLE the title of the new note to be created."
   (interactive "sName: ")
   (message (format "Creating note: %s" title))
+  (let ((note-title (geeknote-parse-title title))
+	(note-tags (geeknote-parse-tags title))
+	(note-notebook (geeknote-parse-notebook title)))
   (async-shell-command
-   (format (concat geeknote-command " create --content WRITE --title %s")
-           (shell-quote-argument title))))
+   (format (concat geeknote-command " create --content WRITE --title %s --tags %s"
+		   (when note-notebook " --notebook %s"))
+           (shell-quote-argument note-title)
+	   (shell-quote-argument note-tags)
+	   (shell-quote-argument note-notebook)))))
+
 
 ;;;###autoload
 (defun geeknote-show (title)
@@ -105,6 +112,50 @@ KEYWORD the keyword to search the notes with."
   (eshell-command
    (format (concat geeknote-command " find --search %s --content-search")
            (shell-quote-argument keyword))))
+
+
+(defun geeknote-parse-title (title)
+  "Rerieve the title from the provided string. Filters out @notebooks and #tags.
+
+TITLE is the input given when asked for a new note title."
+  (let ((wordlist (split-string title)))
+    (mapconcat (lambda (s) s)
+	       (delq nil
+		     (mapcar (lambda (str)
+			       (cond
+				((string-prefix-p "@" str) nil)
+				((string-prefix-p "#" str) nil)
+				(t str)))
+			     wordlist))
+	       " ")))
+
+(defun geeknote-parse-notebook (title)
+  "Rerieve the @notebook from the provided string. Returns nil if none.
+
+TITLE is the input given when asked for a new note title."
+  (let ((wordlist (split-string title)))
+    (elt
+     (delq nil
+	   (mapcar (lambda (str)
+		     (cond
+		      ((string-prefix-p "@" str) (substring str 1))
+		      (t nil)))
+		   wordlist))
+     0)))
+
+(defun geeknote-parse-tags (title)
+  "Rerieve the #tags from the provided string. Returns nil if none.
+
+TITLE is the input given when asked for a new note title."
+  (let ((wordlist (split-string title)))
+    (mapconcat (lambda (s) s)
+	       (delq nil
+		     (mapcar (lambda (str)
+			       (cond
+				((string-prefix-p "#" str) (substring str 1))
+				(t nil)))
+			     wordlist))
+	       ", ")))
 
 (provide 'geeknote)
 ;;; geeknote.el ends here
