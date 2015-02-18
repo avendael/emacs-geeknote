@@ -63,10 +63,10 @@ TITLE the title of the new note to be created."
 	(note-notebook (geeknote-parse-notebook title)))
   (async-shell-command
    (format (concat geeknote-command " create --content WRITE --title %s --tags %s"
-		   (when note-notebook " --notebook %s"))
+                   (when note-notebook " --notebook %s"))
            (shell-quote-argument note-title)
-	   (shell-quote-argument note-tags)
-	   (shell-quote-argument note-notebook)))))
+           (shell-quote-argument (or note-tags ""))
+           (shell-quote-argument (or note-notebook ""))))))
 
 
 ;;;###autoload
