@@ -1,3 +1,6 @@
+## 0.2
+* Add `geeknote-move`
+
 ## 0.1.5
 * `geeknote-create` can now add tags and assign to notebook
 

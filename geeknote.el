@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015 Evan Dale Aromin
 
 ;; Author: Evan Dale Aromin
-;; Version: 0.1.5
+;; Version: 0.2
 ;; Keywords: evernote, geeknote, note, emacs-evernote, evernote-mode
 ;; Package-Requires: ((emacs "24"))
 ;; URL: http://github.com/avendael/emacs-geeknote
@@ -87,7 +87,6 @@ TITLE the title of the note to show."
 TITLE the title of the note to edit."
   (interactive "sName: ")
   (message (format "Editing note: %s" title))
-  ;; (eshell-command
   (async-shell-command
    (format (concat geeknote-command " edit --note %s")
            (shell-quote-argument title))))
@@ -113,6 +112,19 @@ KEYWORD the keyword to search the notes with."
    (format (concat geeknote-command " find --search %s --content-search")
            (shell-quote-argument keyword))))
 
+;;;###autoload
+(defun geeknote-move (note notebook)
+  "Move a NOTE to a different NOTEBOOK.  If the provided NOTEBOOK is
+non-existent, it will be created.
+
+NOTE the title of the note to move.
+NOTEBOOK the title of the notebook where NOTE should be moved."
+  (interactive "sName: \nsMove note %s to notebook: ")
+  (message (format "Moving note %s to notebook %s..." note notebook))
+  (async-shell-command
+   (format (concat geeknote-command " edit --note %s --notebook %s")
+                   (shell-quote-argument note)
+                   (shell-quote-argument notebook))))
 
 (defun geeknote-parse-title (title)
   "Rerieve the title from the provided string. Filters out @notebooks and #tags.
