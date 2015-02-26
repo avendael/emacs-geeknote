@@ -137,6 +137,7 @@ your own keybindings for each command, like so:
 (global-set-key (kbd "C-c g f") 'geeknote-find)
 (global-set-key (kbd "C-c g s") 'geeknote-show)
 (global-set-key (kbd "C-c g r") 'geeknote-remove)
+(global-set-key (kbd "C-c g m") 'geeknote-move)
 ```
 
 ## Alternatives/Inspiration
