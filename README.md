@@ -109,6 +109,8 @@ geeknote command.
 
 `geeknote-move`: Move a note to a different notebook.
 
+![move](screenshots/geeknote-move.gif)
+
 ### Indexes
 
 Geeknote's indexes still work in this package. For example, you can search for a note
