@@ -126,8 +126,42 @@ NOTEBOOK the title of the notebook where NOTE should be moved."
                    (shell-quote-argument note)
                    (shell-quote-argument notebook))))
 
+;;;###autoload
+(defun geeknote-rename-tag (tag newname)
+  "Rename a given TAG to NEWNAME.
+
+TAG the tag to rename.
+NEWNAME the new name of the tag."
+  (interactive "sTag: \nsRename tag %s to: ")
+  (message (format "Renaming tag %s to %s..." tag newname))
+  (async-shell-command
+   (format (concat geeknote-command " tag-edit --tagname %s --title %s")
+           (shell-quote-argument tag)
+           (shell-quote-argument newname))))
+
+;;;###autoload
+(defun geeknote-rename-notebook (notebook newname)
+  "Rename a given NOTEBOOK to NEWNAME.
+
+NOTEBOOK the notebook to rename.
+NEWNAME the new name of the notebook."
+  (interactive "sNotebook: \nsRename notebook %s to: ")
+  (message (format "Renaming notebook %s to %s..." notebook newname))
+  (async-shell-command
+   (format (concat geeknote-command " notebook-edit --notebook %s --title %s")
+           (shell-quote-argument notebook)
+           (shell-quote-argument newname))))
+
+;;;###autoload
+(defun geeknote-list-notebooks ()
+  "List available notebooks."
+  (interactive)
+  (message (format "Listing notebooks..."))
+  (async-shell-command
+   (format (concat geeknote-command " notebook-list"))))
+
 (defun geeknote-parse-title (title)
-  "Rerieve the title from the provided string. Filters out @notebooks and #tags.
+  "Retrieve the title from the provided string. Filters out @notebooks and #tags.
 
 TITLE is the input given when asked for a new note title."
   (let ((wordlist (split-string title)))
@@ -142,7 +176,7 @@ TITLE is the input given when asked for a new note title."
 	       " ")))
 
 (defun geeknote-parse-notebook (title)
-  "Rerieve the @notebook from the provided string. Returns nil if none.
+  "Retrieve the @notebook from the provided string. Returns nil if none.
 
 TITLE is the input given when asked for a new note title."
   (let ((wordlist (split-string title)))
@@ -156,7 +190,7 @@ TITLE is the input given when asked for a new note title."
      0)))
 
 (defun geeknote-parse-tags (title)
-  "Rerieve the #tags from the provided string. Returns nil if none.
+  "Retrieve the #tags from the provided string. Returns nil if none.
 
 TITLE is the input given when asked for a new note title."
   (let ((wordlist (split-string title)))

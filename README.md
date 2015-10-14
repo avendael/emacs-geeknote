@@ -111,6 +111,14 @@ geeknote command.
 
 ![move](screenshots/geeknote-move.gif)
 
+#### Renaming
+
+Both tags and notebooks can be renamed.
+
+`geeknote-rename-tag`: Rename a tag.
+
+`geeknote-rename-notebook`: Rename a notebook.
+
 ### Indexes
 
 Geeknote's indexes still work in this package. For example, you can search for a note
