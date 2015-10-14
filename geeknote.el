@@ -152,6 +152,14 @@ NEWNAME the new name of the notebook."
            (shell-quote-argument notebook)
            (shell-quote-argument newname))))
 
+;;;###autoload
+(defun geeknote-list-notebooks ()
+  "List available notebooks."
+  (interactive)
+  (message (format "Listing notebooks..."))
+  (async-shell-command
+   (format (concat geeknote-command " notebook-list"))))
+
 (defun geeknote-parse-title (title)
   "Retrieve the title from the provided string. Filters out @notebooks and #tags.
 
