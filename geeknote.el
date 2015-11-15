@@ -48,7 +48,7 @@ It's either a path to the geeknote script as an argument to python, or simply
 (defun geeknote-setup ()
   "Setup geeknote."
   (interactive)
-  (eshell-command (concat
+  (async-shell-command (concat
                    geeknote-command " settings --editor emacsclient")))
 
 ;;;###autoload
@@ -76,7 +76,7 @@ TITLE the title of the new note to be created."
 TITLE the title of the note to show."
   (interactive "sName: ")
   (message (format "Showing note: %s" title))
-  (eshell-command
+  (async-shell-command
    (format (concat geeknote-command " show %s")
            (shell-quote-argument title))))
 
@@ -98,7 +98,7 @@ TITLE the title of the note to edit."
 TITLE the title of the note to delete."
   (interactive "sName: ")
   (message (format "Deleting note: %s" title))
-  (eshell-command
+  (async-shell-command
    (format (concat geeknote-command " remove --note %s --force")
            (shell-quote-argument title))))
 
@@ -108,7 +108,7 @@ TITLE the title of the note to delete."
 
 KEYWORD the keyword to search the notes with."
   (interactive "skeyword: ")
-  (eshell-command
+  (async-shell-command
    (format (concat geeknote-command " find --search %s --content-search")
            (shell-quote-argument keyword))))
 
