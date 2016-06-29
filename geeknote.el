@@ -51,6 +51,47 @@ It's either a path to the geeknote script as an argument to python, or simply
           geeknote-command
           " %s; set pid $spawn_id; set timeout 1; set count 5; while { $count > 0 } { expect \"^\\-\\- More \\-\\-\"; if {[catch {send -i $pid \" \"} err]} { exit } else { set count [expr $count-1]} }'"))
 
+(defvar geeknote-mode-hook nil)
+
+(defvar geeknote-mode-map
+  (let ((map (make-keymap)))
+    (define-key map "q" 'kill-this-buffer)
+    (define-key map "j" 'next-line)
+    (define-key map "k" 'previous-line)
+    map)
+  "Keymap for Geeknote major mode")
+
+(regexp-opt '("Total found") t)
+
+(defconst geeknote-font-lock-keywords-1
+  (list
+   '("\\(Total found:\\)" . font-lock-constant-face))
+  "Minimal highlighting keywords for geeknote mode")
+
+(defconst geeknote-font-lock-keywords-2
+  (append geeknote-font-lock-keywords-1
+          (list '("\\(^\s-+[0-9]+\\)" . font-lock-keyword-face)))
+  "Additional Keywords to highlight in geeknote mode")
+
+(defconst geeknote-font-lock-keywords-3
+  (append geeknote-font-lock-keywords-2
+          (list '(" : \\(.+\\)$" . font-lock-builting-face)))
+  "Additional Keywords to highlight in geeknote mode")
+
+(defvar geeknote-font-lock-keywords geeknote-font-lock-keywords-3
+  "Default highlighting expressions for geeknote mode")
+
+(defun geeknote-mode ()
+  "Major mode for navigation Geeknote mode listings."
+  (kill-all-local-variables)
+  (use-local-map geeknote-mode-map)
+  (set (make-local-variable 'font-lock-defaults) '(geeknote-font-lock-keywords))
+  (setq major-mode 'geeknote-mode)
+  (setq mode-name "geeknote")
+  (run-hooks 'geeknote-mode-hook))
+
+(provide 'geeknote-mode)
+
 ;;;###autoload
 (defun geeknote-setup ()
   "Setup geeknote."
@@ -199,7 +240,8 @@ KEYWORD is used for display and buffer title only."
                        'name l)
         (insert "\n")
         (setq lines (cdr lines)))
-      (read-only-mode t))
+      (read-only-mode t)
+      (geeknote-mode))
     (other-window 1)))
 
 ;;;###autoload
@@ -237,7 +279,8 @@ KEYWORD is used for display and buffer title only."
                          'name l)
           (insert "\n"))
         (setq lines (cdr lines)))
-      (read-only-mode t))
+      (read-only-mode t)
+      (geeknote-mode))
     (other-window 1)))
 
 ;;;###autoload
@@ -274,7 +317,8 @@ KEYWORD is used for display and buffer title only."
                          'name l)
           (insert "\n"))
         (setq lines (cdr lines)))
-      (read-only-mode t))
+      (read-only-mode t)
+      (geeknote-mode))
     (other-window 1)))
 
 ;;;###autoload
