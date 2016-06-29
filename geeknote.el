@@ -230,15 +230,15 @@ KEYWORD is used for display and buffer title only."
         (insert (concat (car lines) "\n"))
         (setq lines (cdr lines)))
       (while lines
-        (setq l (car lines))
-        (insert-button l
-                       'follow-link t
-                       'help-echo "Edit this note."
-                       'action (lambda (x)
-                                 (geeknote-edit
-                                  (car (split-string (button-get x 'name) " : "))))
-                       'name l)
-        (insert "\n")
+        (let ((l (car lines)))
+          (insert-button l
+                         'follow-link t
+                         'help-echo "Edit this note."
+                         'action (lambda (x)
+                                   (geeknote-edit
+                                    (car (split-string (button-get x 'name) " : "))))
+                         'name l)
+          (insert "\n"))
         (setq lines (cdr lines)))
       (read-only-mode t)
       (geeknote-mode))
@@ -264,20 +264,20 @@ KEYWORD is used for display and buffer title only."
                        "\n")))
       (setq lines (cdr lines))
       (while lines
-        (setq l 
-              (geeknote--chomp-end (replace-regexp-in-string
-                                   "\^M" ""
-                                   (replace-regexp-in-string "^.*\^M\s+\^M" ""
-                                                             (car lines)))))
-        (unless (zerop (length (geeknote--chomp l)))
-          (insert-button l
-                         'follow-link t
-                         'help-echo "Find notes with this tag."
-                         'action (lambda (x)
-                                   (geeknote-find-tags
-                                    (cadr (split-string (button-get x 'name) " : "))))
-                         'name l)
-          (insert "\n"))
+        (let ((l 
+               (geeknote--chomp-end (replace-regexp-in-string
+                                     "\^M" ""
+                                     (replace-regexp-in-string "^.*\^M\s+\^M" ""
+                                                               (car lines))))))
+          (unless (zerop (length (geeknote--chomp l)))
+            (insert-button l
+                           'follow-link t
+                           'help-echo "Find notes with this tag."
+                           'action (lambda (x)
+                                     (geeknote-find-tags
+                                      (cadr (split-string (button-get x 'name) " : "))))
+                           'name l)
+          (insert "\n")))
         (setq lines (cdr lines)))
       (read-only-mode t)
       (geeknote-mode))
@@ -302,20 +302,20 @@ KEYWORD is used for display and buffer title only."
                        "\n")))
       (setq lines (cdr lines))
       (while lines
-        (setq l 
-              (geeknote--chomp-end (replace-regexp-in-string
-                          "\^M" ""
-                          (replace-regexp-in-string "^.*\^M\s+\^M" ""
-                                                    (car lines)))))
-        (unless (zerop (length (geeknote--chomp l)))
-          (insert-button l
-                         'follow-link t
-                         'help-echo "Search in this notebook."
-                         'action (lambda (x)
-                                   (geeknote--find-with-notebook
-                                    (cadr (split-string (button-get x 'name) " : "))))
-                         'name l)
-          (insert "\n"))
+        (let ((l 
+               (geeknote--chomp-end (replace-regexp-in-string
+                                     "\^M" ""
+                                     (replace-regexp-in-string "^.*\^M\s+\^M" ""
+                                                               (car lines))))))
+          (unless (zerop (length (geeknote--chomp l)))
+            (insert-button l
+                           'follow-link t
+                           'help-echo "Search in this notebook."
+                           'action (lambda (x)
+                                     (geeknote--find-with-notebook
+                                      (cadr (split-string (button-get x 'name) " : "))))
+                           'name l)
+            (insert "\n")))          
         (setq lines (cdr lines)))
       (read-only-mode t)
       (geeknote-mode))
