@@ -111,6 +111,23 @@ geeknote command.
 
 ![move](screenshots/geeknote-move.gif)
 
+#### Buffer Lists
+
+`geeknote-notebook-list`: Show an interactive list of notebooks (top 100).
+`geeknote-tag-list`: Show an interactive list of tags (top 100).
+
+![move](screenshots/geeknote-buffers.gif)
+
+In the buffers, clicking or pressing `enter` will trigger a
+find/search with that tag or with that notebook. Also there is some
+key navigation bound to the `geeknote-mode`
+
+```
+ "q" kill-this-buffer
+ "j" next-line
+ "k" previous-line
+```
+
 ### Indexes
 
 Geeknote's indexes still work in this package. For example, you can search for a note

@@ -1,3 +1,6 @@
+## 0.3
+* Add interactive buffers with `geeknote-notebook-list`, `geeknote-tag-list`, and `geeknote-find`.
+
 ## 0.2
 * Add `geeknote-move`
 
