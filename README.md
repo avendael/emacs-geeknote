@@ -2,6 +2,9 @@
 
 Use Evernote in Emacs through geeknote
 
+My brutally hacked version to provide helm search on the various 
+command flag to geeknote.py
+
 ## Dependencies
 
 ### Geeknote

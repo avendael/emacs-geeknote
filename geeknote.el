@@ -109,6 +109,37 @@ TITLE the title of the new note to be created."
   (interactive "sName: ")
   (message (format "geeknote creating note: %s" title))
   (let ((note-title (geeknote--parse-title title))
+	(note-notebook (geeknote-helm-notebook-list)))
+  (async-shell-command
+   (format (concat geeknote-command " create --content WRITE --title %s "
+                   (when note-notebook " --notebook %s"))
+           (shell-quote-argument note-title)
+           (shell-quote-argument (or note-notebook ""))))))
+
+(defun geeknote-create-no-helm (title)
+  "Create a new note with the given title.
+
+TITLE the title of the new note to be created."
+  (interactive "sName: ")
+  (message (format "geeknote creating note: %s" title))
+  (let ((note-title (geeknote--parse-title title))
+	(note-tags (geeknote--parse-tags title))
+	(note-notebook (geeknote--parse-notebook title)))
+  (async-shell-command
+   (format (concat geeknote-command " create --content WRITE --title %s "
+                   (when note-notebook " --notebook %s"))
+           (shell-quote-argument note-title)
+           (shell-quote-argument (or note-tags ""))
+           (shell-quote-argument (or note-notebook ""))))))
+
+
+(defun geeknote-create-old (title)
+  "Create a new note with the given title.
+
+TITLE the title of the new note to be created."
+  (interactive "sName: ")
+  (message (format "geeknote creating note: %s" title))
+  (let ((note-title (geeknote--parse-title title))
 	(note-tags (geeknote--parse-tags title))
 	(note-notebook (geeknote--parse-notebook title)))
   (async-shell-command
@@ -176,6 +207,19 @@ KEYWORD the keyword to search the notes with."
             " find --search %s --count 20 --content-search")
     (shell-quote-argument keyword))
    keyword))
+
+;;;###autoload
+(defun geeknote-helm-search-notebooks ()
+  "Search for a note with the given keyword.
+
+KEYWORD the keyword to search the notes with."
+  (interactive)
+  (let ((notebook (completing-read "notebook"
+				   (split-string
+				    (vxe-mt-chomp
+				     "geeknote notebook-list | perl -pe 's/^Found.*$//g' | perl -lane 'splice @F,0,2;print \"@F\"' | sed '/^$/d'")
+				    "\n"))))
+    notebook))
 
 (defun geeknote-find-in-notebook (notebook keyword)
   "Search for a note with the given keyword.
