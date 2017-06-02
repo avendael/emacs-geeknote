@@ -221,7 +221,25 @@ KEYWORD the keyword to search the notes with."
 				    "\n"))))
     notebook))
 
-(defun geeknote-find-in-notebook (notebook keyword)
+(defun geeknote-find-in-notebook (keyword)
+  "Search for a note with the given keyword.
+
+KEYWORD the keyword to search the notes with."
+  (interactive "sKeyword: ")
+  (let ((notebook (geeknote-helm-search-notebooks))
+	)
+  (geeknote--find-with-args
+   (format 
+    (concat geeknote-command
+            " find --search %s --count 20 --content-search --notebook %s")
+    (shell-quote-argument keyword)
+    (shell-quote-argument notebook))
+   keyword)
+
+    ))
+
+
+(defun geeknote-find-in-notebook-orig (notebook keyword)
   "Search for a note with the given keyword.
 
 KEYWORD the keyword to search the notes with."
