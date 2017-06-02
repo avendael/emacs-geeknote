@@ -109,12 +109,24 @@ TITLE the title of the new note to be created."
   (interactive "sName: ")
   (message (format "geeknote creating note: %s" title))
   (let ((note-title (geeknote--parse-title title))
-	(note-notebook (geeknote-helm-notebook-list)))
+	(note-notebook (geeknote-helm-search-notebooks)))
   (async-shell-command
    (format (concat geeknote-command " create --content WRITE --title %s "
                    (when note-notebook " --notebook %s"))
            (shell-quote-argument note-title)
            (shell-quote-argument (or note-notebook ""))))))
+
+(defun geeknote-create-notebook (title stack)
+  "Create a new note with the given title.
+
+TITLE the title of the new note to be created."
+  (interactive "sName: \nsStack: ")
+  (message (format "geeknote creating notebook: %s" title))
+  (async-shell-command
+   (format (concat geeknote-command " notebook-create --title %s "
+                   (when stack " --stack %s"))
+           (shell-quote-argument title)
+           (shell-quote-argument stack))))
 
 (defun geeknote-create-no-helm (title)
   "Create a new note with the given title.
