@@ -5,6 +5,15 @@ Use Evernote in Emacs through geeknote
 My brutally hacked version to provide helm search on the various 
 command flag to geeknote.py
 
+aka it literally doesn't work unless you define this function
+
+```elisp
+(defun vxe-mt-chomp (command)
+  (interactive)
+  (replace-regexp-in-string "\n$" "" (shell-command-to-string command)))
+
+```
+
 ## Dependencies
 
 ### Geeknote
