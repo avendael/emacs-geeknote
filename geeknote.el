@@ -335,6 +335,22 @@ TITLE the title of the new note to be created."
     
     ))
 
+(defun geeknote-find-by-tag ()
+  "Search for a note with the given tag.
+
+    KEYWORD the keyword to search the notes with."
+  (interactive)
+  (let ((keyword "") 			; hack , `geeknote--find-with-args' requires a query
+	(tag (geeknote-helm-search-tags))
+	)
+    (geeknote--find-with-args
+     (format 
+      (concat geeknote-command
+	      (concat " find --search %s --count 10000 --content-search --tag %s"))
+      (shell-quote-argument keyword)
+      (shell-quote-argument tag))
+     keyword)))
+
 
 (defun geeknote-find-in-notebook-limit (keyword num-results)
   "Search for a note with the given keyword.
