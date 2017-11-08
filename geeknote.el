@@ -113,7 +113,7 @@
 			    " settings --editor emacsclient")))))
 
     ;;;###autoload
-(defun geeknote-create (title tag)
+(defun geeknote-create (title &optional tag)
   "Create a new note with the given title.
 
 TITLE the title of the new note to be created."
@@ -137,7 +137,7 @@ TITLE the title of the new note to be created."
 	     )
      (concat "*Geeknote* - creating note in - " note-notebook))))
 
-(defun geeknote-create-tag-search (title)
+(defun geeknote-create-existing-tag (title)
   "Create a new note with the given title.
 
 TITLE the title of the new note to be created."
