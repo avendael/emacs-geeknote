@@ -1,111 +1,111 @@
 ;;; geeknote.el --- Use Evernote in Emacs through geeknote
 
-    ;; Copyright (C) 2015 Evan Dale Aromin
+;; Copyright (C) 2015 Evan Dale Aromin
 
-    ;; Author: Evan Dale Aromin
-    ;; Modifications: David A. Shamma
-    ;; Version: 0.3
-    ;; Package-Version: 20150223.815
-    ;; Keywords: evernote, geeknote, note, emacs-evernote, evernote-mode
-    ;; Package-Requires: ((emacs "24"))
-    ;; URL: http://github.com/avendael/emacs-geeknote
+;; Author: Evan Dale Aromin
+;; Modifications: David A. Shamma
+;; Version: 0.3
+;; Package-Version: 20150223.815
+;; Keywords: evernote, geeknote, note, emacs-evernote, evernote-mode
+;; Package-Requires: ((emacs "24"))
+;; URL: http://github.com/avendael/emacs-geeknote
 
     ;;; License:
 
-    ;; This program is free software; you can redistribute it and/or modify
-    ;; it under the terms of the GNU General Public License as published by
-    ;; the Free Software Foundation, either version 3 of the License, or
-    ;; (at your option) any later version.
-    ;;
-    ;; This program is distributed in the hope that it will be useful,
-    ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ;; GNU General Public License for more details.
-    ;;
-    ;; You should have received a copy of the GNU General Public License
-    ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     ;;; Commentary:
 
-    ;; This package wraps common geeknote commands into elisp.  With this, geeknote
-    ;; can be interacted with within emacs instead of through a shell.
-    ;;
-    ;; The command `geeknote' is expected to be present on the user's `$PATH'.
-    ;; Please follow the geeknote installation instructions to obtain this command.
+;; This package wraps common geeknote commands into elisp.  With this, geeknote
+;; can be interacted with within emacs instead of through a shell.
+;;
+;; The command `geeknote' is expected to be present on the user's `$PATH'.
+;; Please follow the geeknote installation instructions to obtain this command.
 
     ;;; Code:
-    (defgroup geeknote nil
-      "Interact with evernote through emacs."
-      :group 'tools
-      :group 'convenience)
+(defgroup geeknote nil
+  "Interact with evernote through emacs."
+  :group 'tools
+  :group 'convenience)
 
-    (defcustom geeknote-command "geeknote"
-      "The geeknote command.
+(defcustom geeknote-command "geeknote"
+  "The geeknote command.
     It's either a path to the geeknote script as an argument to python, or simply
     `geeknote` if the command is already on your PATH."
-      :group 'geeknote
-      :type 'string)
+  :group 'geeknote
+  :type 'string)
 
 
-  (defcustom geeknote-venv "geeknote"
-    "If venv is being used set the name of the virtualenv in which geeknote is installed"
-    :group 'geeknote
-    :type 'string)
+(defcustom geeknote-venv "geeknote"
+  "If venv is being used set the name of the virtualenv in which geeknote is installed"
+  :group 'geeknote
+  :type 'string)
 
-    (defconst geeknote--expect-script
-      (concat "expect -c 'spawn "
-	      geeknote-command
-	      " %s; set pid $spawn_id; set timeout 1; set count 5; while { $count > 0 } { expect \"^\\-\\- More \\-\\-\"; if {[catch {send -i $pid \" \"} err]} { exit } else { set count [expr $count-1]} }'"))
+(defconst geeknote--expect-script
+  (concat "expect -c 'spawn "
+	  geeknote-command
+	  " %s; set pid $spawn_id; set timeout 1; set count 5; while { $count > 0 } { expect \"^\\-\\- More \\-\\-\"; if {[catch {send -i $pid \" \"} err]} { exit } else { set count [expr $count-1]} }'"))
 
-    (defvar geeknote-mode-hook nil)
+(defvar geeknote-mode-hook nil)
 
-    (defvar geeknote-mode-map
-      (let ((map (make-keymap)))
-	(define-key map "q" 'kill-this-buffer)
-	(define-key map "j" 'next-line)
-	(define-key map "k" 'previous-line)
-	map)
-      "Keymap for Geeknote major mode")
+(defvar geeknote-mode-map
+  (let ((map (make-keymap)))
+    (define-key map "q" 'kill-this-buffer)
+    (define-key map "j" 'next-line)
+    (define-key map "k" 'previous-line)
+    map)
+  "Keymap for Geeknote major mode")
 
-    (regexp-opt '("Total found") t)
+(regexp-opt '("Total found") t)
 
-    (defconst geeknote-font-lock-keywords-1
-      (list
-       '("\\(Total found:\\)" . font-lock-constant-face))
-      "Minimal highlighting keywords for geeknote mode")
+(defconst geeknote-font-lock-keywords-1
+  (list
+   '("\\(Total found:\\)" . font-lock-constant-face))
+  "Minimal highlighting keywords for geeknote mode")
 
-    (defconst geeknote-font-lock-keywords-2
-      (append geeknote-font-lock-keywords-1
-	      (list '("\\(^\s-+[0-9]+\\)" . font-lock-keyword-face)))
-      "Additional Keywords to highlight in geeknote mode")
+(defconst geeknote-font-lock-keywords-2
+  (append geeknote-font-lock-keywords-1
+	  (list '("\\(^\s-+[0-9]+\\)" . font-lock-keyword-face)))
+  "Additional Keywords to highlight in geeknote mode")
 
-    (defconst geeknote-font-lock-keywords-3
-      (append geeknote-font-lock-keywords-2
-	      (list '(" : \\(.+\\)$" . font-lock-builting-face)))
-      "Additional Keywords to highlight in geeknote mode")
+(defconst geeknote-font-lock-keywords-3
+  (append geeknote-font-lock-keywords-2
+	  (list '(" : \\(.+\\)$" . font-lock-builting-face)))
+  "Additional Keywords to highlight in geeknote mode")
 
-    (defvar geeknote-font-lock-keywords geeknote-font-lock-keywords-3
-      "Default highlighting expressions for geeknote mode")
+(defvar geeknote-font-lock-keywords geeknote-font-lock-keywords-3
+  "Default highlighting expressions for geeknote mode")
 
-    (defun geeknote-mode ()
-      "Major mode for navigation Geeknote mode listings."
-      (kill-all-local-variables)
-      (use-local-map geeknote-mode-map)
-      (set (make-local-variable 'font-lock-defaults) '(geeknote-font-lock-keywords))
-      (setq major-mode 'geeknote-mode)
-      (setq mode-name "geeknote")
-      (run-hooks 'geeknote-mode-hook))
+(defun geeknote-mode ()
+  "Major mode for navigation Geeknote mode listings."
+  (kill-all-local-variables)
+  (use-local-map geeknote-mode-map)
+  (set (make-local-variable 'font-lock-defaults) '(geeknote-font-lock-keywords))
+  (setq major-mode 'geeknote-mode)
+  (setq mode-name "geeknote")
+  (run-hooks 'geeknote-mode-hook))
 
-    (provide 'geeknote-mode)
+(provide 'geeknote-mode)
 
     ;;;###autoload
-    (defun geeknote-setup ()
-      "Setup geeknote."
-      (interactive)
-      (message (concat "geeknote: "
-		       (shell-command-to-string
-			(concat geeknote-command
-				" settings --editor emacsclient")))))
+(defun geeknote-setup ()
+  "Setup geeknote."
+  (interactive)
+  (message (concat "geeknote: "
+		   (shell-command-to-string
+		    (concat geeknote-command
+			    " settings --editor emacsclient")))))
 
     ;;;###autoload
 (defun geeknote-create (title tag)
@@ -116,18 +116,18 @@ TITLE the title of the new note to be created."
   (message (format "geeknote creating note: %s" title))
   (let ((note-title (geeknote--parse-title title))
 	(note-notebook (geeknote-helm-search-notebooks)))
-  (async-shell-command
-   (format (concat geeknote-command " create --content WRITE --title %s "
-		   (when note-notebook " --notebook %s")
-		   (cond ((not (string= "" tag))
-			  " --tag %s"))
-		   )
-	   (shell-quote-argument note-title)
-	   (shell-quote-argument (or note-notebook ""))
-	   (shell-quote-argument tag)
-	   
-	   )
-   (concat "*Geeknote* - creating note in - " note-notebook))))
+    (async-shell-command
+     (format (concat geeknote-command " create --content WRITE --title %s "
+		     (when note-notebook " --notebook %s")
+		     (cond ((not (string= "" tag))
+			    " --tag %s"))
+		     )
+	     (shell-quote-argument note-title)
+	     (shell-quote-argument (or note-notebook ""))
+	     (shell-quote-argument tag)
+	     
+	     )
+     (concat "*Geeknote* - creating note in - " note-notebook))))
 
     ;;;###autoload
 (defun geeknote-create-venv (title)
@@ -138,7 +138,7 @@ TITLE the title of the new note to be created."
   (message (format "geeknote creating note: %s" title))
   (let ((current venv-current-name))
     (venv-workon geeknote-venv)
-
+    
     (let ((note-title (geeknote--parse-title title))
 	  (note-notebook (geeknote-helm-search-notebooks)))
       (async-shell-command
@@ -271,16 +271,16 @@ TITLE the title of the new note to be created."
 
     ;;;###autoload
 (defun geeknote-helm-search-notebooks ()
-  "Search for a note with the given keyword.
-
-    KEYWORD the keyword to search the notes with."
+  "Generate a helm list of notebooks, and return the selected one"
   (interactive)
   (let ((notebook (completing-read "notebook"
 				   (split-string
-				    (vxe-mt-chomp
-				     "geeknote notebook-list | perl -pe 's/^Found.*$//g' | perl -lane 'splice @F,0,2;print \"@F\"' | sed '/^$/d'")
-				    "\n"))))
-    notebook))
+				    (geeknote--chomp
+				     (shell-command-to-string
+				      "geeknote notebook-list | perl -pe 's/^Found.*$//g' | perl -lane 'splice @F,0,2;print \"@F\"' | sed '/^$/d'"))
+				    "\n")))))
+	
+    notebook)
 
 
 (defun geeknote-find-in-notebook (keyword)
@@ -297,7 +297,7 @@ TITLE the title of the new note to be created."
       (shell-quote-argument keyword)
       (shell-quote-argument notebook))
      keyword)
-
+    
     ))
 
 
@@ -315,7 +315,7 @@ TITLE the title of the new note to be created."
       (shell-quote-argument keyword)
       (shell-quote-argument notebook))
      keyword)
-
+    
     ))
 
 
@@ -334,7 +334,7 @@ TITLE the title of the new note to be created."
       (shell-quote-argument keyword)
       (shell-quote-argument notebook))
      keyword)
-
+    
     ))
 
 
