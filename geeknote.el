@@ -1,4 +1,4 @@
-;;; geeknote.org --- Use Evernote in Emacs through geeknote
+;;; geeknote.el --- Use Evernote in Emacs through geeknote
 
     ;; Copyright (C) 2015 Evan Dale Aromin
 
@@ -108,7 +108,7 @@
 				" settings --editor emacsclient")))))
 
     ;;;###autoload
-(defun geeknote-create (title)
+(defun geeknote-create (title tag)
   "Create a new note with the given title.
 
 TITLE the title of the new note to be created."
@@ -119,10 +119,12 @@ TITLE the title of the new note to be created."
   (async-shell-command
    (format (concat geeknote-command " create --content WRITE --title %s "
 		   (when note-notebook " --notebook %s")
-		   ""
+		   (cond ((not (string= "" tag))
+			  " --tag %s"))
 		   )
 	   (shell-quote-argument note-title)
 	   (shell-quote-argument (or note-notebook ""))
+	   (shell-quote-argument tag)
 	   
 	   )
    (concat "*Geeknote* - creating note in - " note-notebook))))
