@@ -129,6 +129,29 @@ TITLE the title of the new note to be created."
 	     )
      (concat "*Geeknote* - creating note in - " note-notebook))))
 
+(defun geeknote-create-tag-search (title)
+  "Create a new note with the given title.
+
+TITLE the title of the new note to be created."
+  (interactive "sTitle: ")
+  (message (format "geeknote creating note: %s" title))
+  (let ((note-title (geeknote--parse-title title))
+	(tag (geeknote-helm-search-tags))
+	(note-notebook (geeknote-helm-search-notebooks)))
+    (async-shell-command
+     (format (concat geeknote-command " create --content WRITE --title %s "
+		     (when note-notebook " --notebook %s")
+		     (cond ((not (string= "" tag))
+			    " --tag %s"))
+		     )
+	     (shell-quote-argument note-title)
+	     (shell-quote-argument (or note-notebook ""))
+	     (shell-quote-argument tag)
+	     
+	     )
+     (concat "*Geeknote* - creating note in - " note-notebook))))
+
+
     ;;;###autoload
 (defun geeknote-create-venv (title)
   "Create a new note with the given title.
@@ -278,9 +301,21 @@ TITLE the title of the new note to be created."
 				    (geeknote--chomp
 				     (shell-command-to-string
 				      "geeknote notebook-list | perl -pe 's/^Found.*$//g' | perl -lane 'splice @F,0,2;print \"@F\"' | sed '/^$/d'"))
-				    "\n")))))
+				    "\n"))))
 	
-    notebook)
+    notebook))
+
+(defun geeknote-helm-search-tags ()
+  "Generate a helm list of notebooks, and return the selected one"
+  (interactive)
+  (let ((tag (completing-read "tag: "
+			      (split-string
+			       (geeknote--chomp
+				(shell-command-to-string
+				 "geeknote tag-list | awk '{print $3}'"))
+			       "\n"))))
+	
+    tag))
 
 
 (defun geeknote-find-in-notebook (keyword)
