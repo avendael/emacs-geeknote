@@ -52,6 +52,11 @@
   :group 'geeknote
   :type 'string)
 
+(defcustom geeknote-default-tag ""
+  "Set a default tag for notes created with `geeknote-create' "
+  :group 'geeknote
+  :type 'string)
+
 (defconst geeknote--expect-script
   (concat "expect -c 'spawn "
 	  geeknote-command
@@ -115,16 +120,19 @@ TITLE the title of the new note to be created."
   (interactive "sTitle: \nsTag:")
   (message (format "geeknote creating note: %s" title))
   (let ((note-title (geeknote--parse-title title))
-	(note-notebook (geeknote-helm-search-notebooks)))
+	(note-notebook (geeknote-helm-search-notebooks))
+	(note-tag (if (string= "" tag)
+		      geeknote-default-tag
+		    tag)))
     (async-shell-command
      (format (concat geeknote-command " create --content WRITE --title %s "
 		     (when note-notebook " --notebook %s")
-		     (cond ((not (string= "" tag))
+		     (cond ((not (string= "" note-tag))
 			    " --tag %s"))
 		     )
 	     (shell-quote-argument note-title)
 	     (shell-quote-argument (or note-notebook ""))
-	     (shell-quote-argument tag)
+	     note-tag
 	     
 	     )
      (concat "*Geeknote* - creating note in - " note-notebook))))
