@@ -2,15 +2,189 @@
 #+TITLE: geeknote.el
 #+STARTUP: indent
 #+OPTIONS: toc:nil
-Some additions to the current incarnation of geeknote
+Some additions to the [[https://github.com/avendael/emacs-geeknote][to the excellent original by avendael]]
 ** Overview :TOC:
 - [[#installation][Installation]]
-- [[#usage][Usage]]
-- [[#extending][Extending]]
+    - [[#geeknote][geeknote]]
+    - [[#emacs-config][emacs config]]
+  - [[#usage][Usage]]
+    - [[#configuration][configuration]]
+    - [[#commands][commands]]
+      - [[#create][Create]]
+      - [[#edit][Edit]]
+      - [[#find][Find]]
+      - [[#show][Show]]
+      - [[#remove][Remove]]
+      - [[#move][Move]]
+      - [[#buffer-lists][Buffer Lists]]
+    - [[#indexes][Indexes]]
+    - [[#keybindings][Keybindings]]
+  - [[#alternativesinspiration][Alternatives/Inspiration]]
 - [[#implementation][Implementation]]
 
 * Installation
-* Usage
-* Extending
+
+*** geeknote
+  This package assumes that you have the `geeknote` command in your `$PATH`.
+  To obtain this command, please refer to the official geeknote
+
+  [[https://github.com/VitaliyRodnenko/geeknote][geeknote documentation]]
+
+  Sometimes, geeknote `HEAD` will have bugs. If so, commit `192a0c5` is tested
+  to work properly. You can checkout that revision if needed.
+
+*** emacs config
+    Because of the way `geeknote` works, it is expected that you have emacs running in
+    server or daemon mode. Either of the two should work:
+
+ #+BEGIN_SRC elisp
+ (server-start)
+ #+END_SRC
+ or 
+ #+BEGIN_SRC shell
+ $ emacs --daemon
+
+ #+END_SRC
+
+
+
+** Usage
+
+*** configuration
+
+    <It is recommended that the `geeknote` command is present in your `$PATH`. If so, no
+further configuration is needed. However, if you would prefer to reference `geeknote`
+from another location, you can do so by customizing the variable `geeknote-command`.
+
+    #+BEGIN_SRC elisp
+(setq geeknote-command "python ~/path/to/geeknote.py")    
+    #+END_SRC
+
+This package expects `emacsclient` to be defined as your geeknote editor. You can
+set it up by running this command in your terminal:
+
+#+BEGIN_SRC shell
+geeknote settings --editor "emacsclient"
+#+END_SRC
+
+*** commands
+**** Create
+#+BEGIN_SRC elisp
+(geeknote-create) ;Create a new note.
+#+END_SRC
+
+[[file:screenshots/geeknote-create.gif][create]]
+
+You can specify a notebook in the title string using the `@` prefix, like so:
+
+
+notetitle @notebookname
+
+
+Similarly, you can specify tags using the `#` prefix:
+
+```
+notetitle #tag1, tag2
+```
+
+This means you can create a note in your desired notebook and tag it in one shot:
+
+```
+notetitle @notebookname #tag1, tag2
+```
+
+If the notebook and the tags are non-existent, they will be created.
+**** Edit
+#+BEGIN_SRC elisp 
+(geeknote-edit) ; edit a note by title or index
+#+END_SRC
+
+[[file:screenshots/geeknote-edit.gif][edit]]
+
+Notes can be written in markdown. Most markdown are correctly displayed in Evernote.
+
+[[file:screenshots/geeknote-markdown.gif][markdown]]
+
+**** Find
+#+BEGIN_SRC elisp 
+(geeknote-find) ;  Use a keyword to search notes by title and content.
+#+END_SRC
+
+The index of the results can be used as an argument to another
+geeknote command.
+
+
+[[file:screenshots/geeknote-find.gif][find]]
+
+**** Show
+#+BEGIN_SRC elisp
+(geeknote-show) ;  Show a note in a non-editable Emacs buffer.
+#+END_SRC
+[[file:screenshots/geeknote-show.gif][show]]
+**** Remove
+#+BEGIN_SRC elisp
+(geekonte-remove) ;Delete a note.
+#+END_SRC
+[[file:screenshots/geeknote-remove.gif][remove]]
+**** Move
+#+BEGIN_SRC elisp
+(geeknote-move) ;Move a note to a different notebook.
+#+END_SRC
+[[file:screenshots/geeknote-move.gif][move]]
+**** Buffer Lists
+
+#+BEGIN_SRC elisp
+(geeknote-notebook-list) ; Show an interactive list of notebooks (top 100).
+(geeknote-tag-list) ; Show an interactive list of tags (top 100).
+
+#+END_SRC
+
+[[file:screenshots/geeknote-buffers.gif][move]]
+
+In the buffers, clicking or pressing `enter` will trigger a
+find/search with that tag or with that notebook. Also there is some
+key navigation bound to the `geeknote-mode`
+
+#+BEGIN_EXAMPLE
+ "q" kill-this-buffer
+ "j" next-line
+ "k" previous-line
+#+END_EXAMPLE
+*** Indexes
+
+Geeknote's indexes still work in this package. For example, you can search for a note
+beforehand and use the note's index as an argument to `geeknote-edit`
+
+```
+# `geeknote-find` output
+1: A note
+2: The note you like to edit
+3: Some other note
+
+# `geeknote-edit` the second result
+(geeknote-edit 2)
+```
+
+This also applies when a command is called interactively.
+
+*** Keybindings
+
+This package does not define any keybindings at the moment. Feel free to define
+your own keybindings for each command, like so:
+
+#+BEGIN_SRC elisp
+(global-set-key (kbd "C-c g c") 'geeknote-create)
+(global-set-key (kbd "C-c g e") 'geeknote-edit)
+(global-set-key (kbd "C-c g f") 'geeknote-find)
+(global-set-key (kbd "C-c g s") 'geeknote-show)
+(global-set-key (kbd "C-c g r") 'geeknote-remove)
+(global-set-key (kbd "C-c g m") 'geeknote-move)
+#+END_SRC
+
+** Alternatives/Inspiration
+You can check out [[https://github.com/pymander/evernote-mode][evernote-mode]], an Emacs package that integrates
+Evernote with org-mode. Sublime Text also has an excellent Evernote
+[[https://packagecontrol.io/packages/SublimeEvernote][plugin]].
+
 * [[file:geeknote.org][Implementation]]
 
