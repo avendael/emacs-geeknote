@@ -1,6 +1,25 @@
-(provide 'geeknote)
-    ;;; geeknote.el ends here
+# -*- mode:org -*-
+#+TITLE: Implementation
+#+STARTUP: indent
+#+OPTIONS: toc:nil
+implementation of geeknote.el
+procedures, data, macros
+** Overview :TOC:
+  - [[#license][License]]
+- [[#global-data][Global Data]]
+- [[#procedures][Procedures]]
+  - [[#the-venerable-chomp-procedure][The venerable chomp procedure]]
+  - [[#insert-an-email-tag-from-a-helm-prompt-of-available-tags][insert an email tag from a helm prompt of available tags]]
+  - [[#insert-an-email-notebook-from-a-helm-prompt-of-available-notebooks][insert an email notebook from a helm prompt of available notebooks]]
+  - [[#build-a-cache-of-the-current-set-of-tags-and-notebooks][build a cache of the current set of tags and notebooks]]
+  - [[#major-mode-definition][major mode definition]]
+  - [[#core-api][core api]]
+  - [[#initialize-caches][initialize caches]]
+  - [[#package-footer][package footer]]
+- [[#abstractions][Abstractions]]
 
+** License
+#+BEGIN_SRC elisp :tangle geeknote.el
 ;;; geeknote.el --- Use Evernote in Emacs through geeknote
 
 ;; Copyright (C) 2015 Evan Dale Aromin
@@ -37,8 +56,13 @@
 ;; Please follow the geeknote installation instructions to obtain this command.
 
     ;;; Code:
+#+END_SRC
 
-;;; Code:
+
+* Global Data
+#+BEGIN_SRC elisp :tangle geeknote.el
+
+    ;;; Code:
 (defgroup geeknote nil
   "Interact with evernote through emacs."
   :group 'tools
@@ -125,57 +149,76 @@
    (progn (setq geeknote-notebooks results)
 	  (message "geeknote-notebooks - configured"))))
 
-;;;###autoload
-(defun geeknote--chomp (str)
-  "Chomp leading and tailing whitespace from STR."
-  (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
-				    (: (* (any " \t\n")) eos)))
-			    ""
-			    str))
+#+END_SRC
+* Procedures
+** The venerable chomp procedure
+ #+BEGIN_SRC elisp :tangle geeknote.el
+     ;;;###autoload
+ (defun geeknote--chomp (str)
+   "Chomp leading and tailing whitespace from STR."
+   (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
+				     (: (* (any " \t\n")) eos)))
+			     ""
+			     str))
 
-(defun geeknote-email-tag-insert ()
-  (interactive)
-  (let ((tag (completing-read "tag: " geeknote-tags) ))
-    (insert (concat "#") tag))
-  (geeknote-gen-notebook-tag-cache))
+ #+END_SRC
+** insert an email tag from a helm prompt of available tags
+   additionally rebuild the notebook cache in the even that a new notebook is created
+   #+BEGIN_SRC elisp :tangle geeknote.el
+     (defun geeknote-email-tag-insert ()
+       (interactive)
+       (let ((tag (completing-read "tag: " geeknote-tags) ))
+	 (insert (concat "#") tag))
+       (geeknote-gen-notebook-tag-cache))
 
-(defun geeknote-email-notebook-insert ()
-  (interactive)
-  (let ((notebook (completing-read "notebook: " geeknote-notebooks)))
-    (insert (concat "@" notebook)))
-  (geeknote-gen-notebook-tag-cache))
+   #+END_SRC
+** insert an email notebook from a helm prompt of available notebooks
+   additionally rebuild the tag cache in the even that a new tag is added
+#+BEGIN_SRC elisp :tangle geeknote.el
+  (defun geeknote-email-notebook-insert ()
+    (interactive)
+    (let ((notebook (completing-read "notebook: " geeknote-notebooks)))
+      (insert (concat "@" notebook)))
+    (geeknote-gen-notebook-tag-cache))
+#+END_SRC
+** build a cache of the current set of tags and notebooks
+   #+BEGIN_SRC elisp :tangle geeknote.el
+     (defun geeknote-gen-notebook-tag-cache ()
+       (interactive)
+       (async-start
+	(lambda ()
+	  (split-string
+	   (shell-command-to-string "~/.emacs.d/var/geeknote/bin/geeknote tag-list | awk '{print $3}'") "\n"))
+	(lambda (result)
+	  (progn (setq geeknote-tags result )
+		 (message "tag values set"))))
+  
+       (async-start
+	(lambda ()
+	  (setq geeknote-notebooks (split-string (shell-command-to-string
+						  "~/.emacs.d/var/geeknote/bin/geeknote notebook-list | perl -pe 's/^Found.*$//g' | perl -lane 'splice @F,0,2;print \"@F\"' | sed '/^$/d'")
+					       "\n")))
+	(lambda (results)
+	  (progn (setq geeknote-notebooks results)
+		 (message "geeknote-notebooks - configured")))))
+   #+END_SRC
+** major mode definition
+   #+BEGIN_SRC elisp :tangle geeknote.el
+     (defun geeknote-mode ()
+       "Major mode for navigation Geeknote mode listings."
+       (kill-all-local-variables)
+       (use-local-map geeknote-mode-map)
+       (set (make-local-variable 'font-lock-defaults) '(geeknote-font-lock-keywords))
+       (setq major-mode 'geeknote-mode)
+       (setq mode-name "geeknote")
+       (run-hooks 'geeknote-mode-hook))
 
-(defun geeknote-gen-notebook-tag-cache ()
-  (interactive)
-  (async-start
-   (lambda ()
-     (split-string
-      (shell-command-to-string "~/.emacs.d/var/geeknote/bin/geeknote tag-list | awk '{print $3}'") "\n"))
-   (lambda (result)
-     (progn (setq geeknote-tags result )
-	    (message "tag values set"))))
+     (provide 'geeknote-mode)
 
-  (async-start
-   (lambda ()
-     (setq geeknote-notebooks (split-string (shell-command-to-string
-					     "~/.emacs.d/var/geeknote/bin/geeknote notebook-list | perl -pe 's/^Found.*$//g' | perl -lane 'splice @F,0,2;print \"@F\"' | sed '/^$/d'")
-					  "\n")))
-   (lambda (results)
-     (progn (setq geeknote-notebooks results)
-	    (message "geeknote-notebooks - configured")))))
-
-(defun geeknote-mode ()
-  "Major mode for navigation Geeknote mode listings."
-  (kill-all-local-variables)
-  (use-local-map geeknote-mode-map)
-  (set (make-local-variable 'font-lock-defaults) '(geeknote-font-lock-keywords))
-  (setq major-mode 'geeknote-mode)
-  (setq mode-name "geeknote")
-  (run-hooks 'geeknote-mode-hook))
-
-(provide 'geeknote-mode)
-
-;;;###autoload
+   #+END_SRC
+** core api
+   #+BEGIN_SRC elisp :tangle geeknote.el
+    ;;;###autoload
 (defun geeknote-setup ()
   "Setup geeknote."
   (interactive)
@@ -785,5 +828,14 @@ TITLE the title of the new note to be created."
   (replace-regexp-in-string (rx (* (any " \t\n")) eos)
 			    ""
 			    str))
-
-(geeknote-gen-notebook-tag-cache)
+   #+END_SRC
+** initialize caches
+   #+BEGIN_SRC elisp :tangle geeknote.el
+   (geeknote-gen-notebook-tag-cache)
+   #+END_SRC
+** package footer
+#+BEGIN_SRC lisp :tangle geeknote.el
+(provide 'geeknote)
+    ;;; geeknote.el ends here
+#+END_SRC
+* Abstractions
