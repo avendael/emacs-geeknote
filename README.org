@@ -1,0 +1,16 @@
+# -*- mode:org -*-
+#+TITLE: geeknote.el
+#+STARTUP: indent
+#+OPTIONS: toc:nil
+Some additions to the current incarnation of geeknote
+** Overview :TOC:
+- [[#installation][Installation]]
+- [[#usage][Usage]]
+- [[#extending][Extending]]
+- [[#implementation][Implementation]]
+
+* Installation
+* Usage
+* Extending
+* [[file:geeknote.org][Implementation]]
+
