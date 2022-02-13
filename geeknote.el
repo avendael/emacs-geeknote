@@ -49,7 +49,7 @@ It's either a path to the geeknote script as an argument to python, or simply
 (defconst geeknote--expect-script
   (concat "expect -c 'spawn "
           geeknote-command
-          " %s; set pid $spawn_id; set timeout 1; set count 5; while { $count > 0 } { expect \"^\\-\\- More \\-\\-\"; if {[catch {send -i $pid \" \"} err]} { exit } else { set count [expr $count-1]} }'"))
+          " %s; set pid $spawn_id; set timeout 10; set count 5; while { $count > 0 } { expect \"^\\-\\- More \\-\\-\"; if {[catch {send -i $pid \" \"} err]} { exit } else { set count [expr $count-1]} }'"))
 
 (defvar geeknote-mode-hook nil)
 
@@ -108,15 +108,23 @@ It's either a path to the geeknote script as an argument to python, or simply
 TITLE the title of the new note to be created."
   (interactive "sName: ")
   (message (format "geeknote creating note: %s" title))
-  (let ((note-title (geeknote--parse-title title))
-	(note-tags (geeknote--parse-tags title))
-	(note-notebook (geeknote--parse-notebook title)))
+  (let* ((note-title (geeknote--parse-title title))
+        (note-tags (geeknote--parse-tags title))
+        (message (format "New note tags: %s" (or note-tags "")))
+        (note-notebook (geeknote--parse-notebook title)))
   (async-shell-command
-   (format (concat geeknote-command " create --content WRITE --title %s --tags %s"
+   (format (concat geeknote-command " create --content WRITE --title %s %s"
                    (when note-notebook " --notebook %s"))
            (shell-quote-argument note-title)
-           (shell-quote-argument (or note-tags ""))
-           (shell-quote-argument (or note-notebook ""))))))
+           (if (equal note-tags "")
+               ""
+             (mapconcat 'identity
+                        (mapcar (lambda (x) (concat "--tag " x))
+                                (mapcar 'shell-quote-argument (split-string note-tags ",")))
+                        " ")
+             )
+           (shell-quote-argument (or note-notebook "")))
+   )))
 
 ;;;###autoload
 (defun geeknote-show (title)
@@ -185,7 +193,7 @@ KEYWORD the keyword to search the notes with."
   (geeknote--find-with-args
    (format 
     (concat geeknote-command
-            " find --search %s --count 20 --content-search --notebooks %s")
+            " find --search %s --count 20 --content-search --notebook %s")
     (shell-quote-argument keyword)
     (shell-quote-argument notebook))
    keyword))
@@ -197,11 +205,11 @@ KEYWORD the keyword to search the notes with."
     (geeknote--find-with-args
      (format 
       (concat geeknote-command
-              " find --search %s --count 20 --content-search --notebooks %s")
+              " find --search %s --count 20 --content-search --notebook %s")
       (shell-quote-argument keyword)
       (shell-quote-argument notebook))
      keyword)))
-    
+
 (defun geeknote-find-tags (tags)
   "Search for a note with the given keyword.
 
@@ -210,9 +218,11 @@ TAGS the tags to search the notes with."
   (geeknote--find-with-args
    (format 
     (concat geeknote-command
-            " find --tags %s --count 20")
-    (shell-quote-argument tags))
-   tags))
+            " find %s --count 20") 
+    (mapconcat 'identity (mapcar (lambda (x) (concat "--tag " x)) (split-string tags)) " ")
+    )
+   tags)
+  )
 
 (defun geeknote--find-with-args (command keyword)
   "Search for a note with the given arg string.
